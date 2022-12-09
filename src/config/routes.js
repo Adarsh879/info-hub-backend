@@ -20,12 +20,6 @@ const {
   removeQuestion,
 } = require("../controller/questions");
 const {
-  loadComments,
-  validate,
-  createComment,
-  removeComment,
-} = require("../controller/comments");
-const {
   loadAnswers,
   answerValidate,
   createAnswer,
@@ -42,6 +36,9 @@ const answerAuth = require("../middlewares/answerAuth");
 router.post("/signup", signup);
 router.post("/authenticate", authenticate);
 
+//users
+router.get("/user/:userid", find);
+
 //questions
 router.param("question", loadQuestions);
 router.get("/question", listQuestions);
@@ -52,6 +49,8 @@ router.delete(
   [requireAuth, questionAuth],
   removeQuestion
 );
+router.get("/questions/:tags", listByTags);
+router.get("/question/user/:userid", listByUser);
 
 //tags
 router.get("/tags/populertags", listPopulerTags);

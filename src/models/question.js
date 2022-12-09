@@ -55,18 +55,6 @@ questionSchema.methods = {
     return this.save();
   },
 
-  addComment: function (author, body) {
-    this.comments.push({ author, body });
-    return this.save();
-  },
-
-  removeComment: function (id) {
-    const comment = this.comments.id(id);
-    if (!comment) throw new Error("Comment not found");
-    comment.remove();
-    return this.save();
-  },
-
   addAnswer: function (author, text) {
     this.answers.push({ author, text });
     return this.save();
@@ -81,26 +69,12 @@ questionSchema.methods = {
 };
 
 questionSchema.pre(/^find/, function () {
-  this.populate("author")
-    .populate("comments.author", "-role")
-    .populate("answers.author", "-role")
-    .populate("answers.comments.author", "-role");
+  this.populate("author");
 });
 
 questionSchema.pre("save", function (next) {
   this.wasNew = this.isNew;
   next();
 });
-
-// questionSchema.post("save", function (doc, next) {
-//   if (this.wasNew) this.vote(this.author._id, 1);
-//   doc
-//     .populate("author")
-//     .populate("answers.author", "-role")
-//     .populate("comments.author", "-role")
-//     .populate("answers.comments.author", "-role")
-//     .execPopulate()
-//     .then(() => next());
-// });
 
 module.exports = mongoose.model("Question", questionSchema);

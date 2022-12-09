@@ -30,18 +30,16 @@ exports.signup = async (req, res) => {
 
     if (existingUser) {
       return res.status(400).json({
-        message: "Username already exists.",
+        message: "User already exists.",
       });
     }
 
     const newUser = new User(userData);
     const savedUser = await newUser.save();
-
     if (savedUser) {
       const token = createToken(savedUser);
       const decodedToken = jwtDecode(token);
       const expiresAt = decodedToken.exp;
-      console.log(savedUser);
       const { username, id, created, profilePhoto } = savedUser;
       const userInfo = {
         username,
@@ -134,39 +132,9 @@ exports.search = async (req, res, next) => {
 
 exports.find = async (req, res, next) => {
   try {
-    const users = await User.findOne({ username: req.params.username });
+    const users = await User.findById(req.params.userid);
     res.json(users);
   } catch (error) {
     next(error);
   }
 };
-
-// exports.validateUser = [
-//   body("username")
-//     .exists()
-//     .trim()
-//     .withMessage("is required")
-
-//     .notEmpty()
-//     .withMessage("cannot be blank")
-
-//     .isLength({ max: 16 })
-//     .withMessage("must be at most 16 characters long")
-
-//     .matches(/^[a-zA-Z0-9_-]+$/)
-//     .withMessage("contains invalid characters"),
-
-//   body("password")
-//     .exists()
-//     .trim()
-//     .withMessage("is required")
-
-//     .notEmpty()
-//     .withMessage("cannot be blank")
-
-//     .isLength({ min: 6 })
-//     .withMessage("must be at least 6 characters long")
-
-//     .isLength({ max: 50 })
-//     .withMessage("must be at most 50 characters long"),
-// ];

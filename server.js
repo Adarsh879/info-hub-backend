@@ -37,5 +37,12 @@ router.get("/", function (req, res, next) {
   res.status(200).json({ message: "Default Route works" });
 });
 
-//
+//router
 app.use("/api", require("./src/config/routes"));
+
+//error interceptor
+app.use((error, req, res, next) => {
+  res.status(error.status || 500).json({
+    message: error.message,
+  });
+});
